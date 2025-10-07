@@ -9,9 +9,15 @@ import numpy as np
 import pickle
 import pandas as pd
 import streamlit as st
+import os
 
-# Load the trained model
-loaded_model = pickle.load(open('C:/Users/Benjamin/Desktop/icyuzi/phone_sales_data.pkl', 'rb'))
+# Get current directory
+current_dir = os.path.dirname(__file__)
+
+# Load the trained model (use relative path)
+model_path = os.path.join(current_dir, 'phone_sales_data.pkl')
+with open(model_path, 'rb') as file:
+    loaded_model = pickle.load(file)
 
 # Function to predict phone price
 def phone_price_prediction(screen_size, ram, storage, battery_capacity, camera_quality):
@@ -25,19 +31,16 @@ def phone_price_prediction(screen_size, ram, storage, battery_capacity, camera_q
     predicted_price = loaded_model.predict(new_phone)
     return predicted_price[0]
 
-
-
 # Main Streamlit app
 def main():
     st.title("📱 Phone Price Prediction App")
- 
-    # Input fields
-    screen_size = st.text_input('Screen Size (inches)(e.g., 6.2)')
-    ram = st.text_input('RAM (GB)(e.g., 4)')
-    storage = st.text_input('Storage (GB)(e.g., 64)')
-    battery_capacity = st.text_input('Battery Capacity (mAh)(e.g., 4000)')
-    camera_quality = st.text_input('Camera Quality (MP)(e.g., 48)')
 
+    # Input fields
+    screen_size = st.text_input('Screen Size (inches) (e.g., 6.2)')
+    ram = st.text_input('RAM (GB) (e.g., 4)')
+    storage = st.text_input('Storage (GB) (e.g., 64)')
+    battery_capacity = st.text_input('Battery Capacity (mAh) (e.g., 4000)')
+    camera_quality = st.text_input('Camera Quality (MP) (e.g., 48)')
 
     if st.button('Predict Price'):
         try:
@@ -52,10 +55,7 @@ def main():
             price = phone_price_prediction(screen_size, ram, storage, battery_capacity, camera_quality)
             st.success(f'The predicted price for the phone is: ${price:.2f}')
         except ValueError:
-             st.error("Please enter valid numeric values for screen_size, ram, storage, battery_capacity, camera_quality.")
+            st.error("Please enter valid numeric values for all inputs.")
 
 if __name__ == '__main__':
-     main()
-
-    
-    
+    main()
